@@ -20,7 +20,7 @@
 					<router-link tag="span" :to="{ name: 'bot-config', params: { bot: bot.name } }" class="bot-profile__action bot-profile__action--config">
 						<font-awesome-icon icon="wrench"></font-awesome-icon>
 					</router-link>
-					<router-link tag="span" :to="{ name: 'bot-bgr', params: { bot: bot.name } }" class="bot-profile__action bot-profile__action--gbr">
+					<router-link tag="span" :to="{ name: 'bot-redeem', params: { bot: bot.name } }" class="bot-profile__action bot-profile__action--gbr">
 						<font-awesome-icon icon="key"></font-awesome-icon>
 					</router-link>
 

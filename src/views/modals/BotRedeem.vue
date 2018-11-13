@@ -28,7 +28,7 @@
 	import BgrSummary from '../../components/BGR/Summary.vue';
 
 	export default {
-		name: 'bot-bgr',
+		name: 'bot-redeem',
 		components: { BgrStatus, BgrInput, BgrCheck, BgrSummary },
 		data() {
 			return {

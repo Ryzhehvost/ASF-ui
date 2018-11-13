@@ -69,11 +69,11 @@ export default [
 		meta: { modal: true }
 	},
 	{
-		path: '/page/bot/:bot/bgr',
-		name: 'bot-bgr',
+		path: '/page/bot/:bot/redeem',
+		name: 'bot-redeem',
 		components: {
 			default: () => import('../views/Bots.vue'),
-			modal: () => import('../views/modals/BotBGR.vue')
+			modal: () => import('../views/modals/BotRedeem.vue')
 		},
 		meta: { modal: true }
 	},
