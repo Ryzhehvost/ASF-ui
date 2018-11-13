@@ -17,7 +17,7 @@
 	const commonDelimiters = [':', ';', '|', '-', ','];
 
 	export default {
-		name: 'bgr-input',
+		name: 'redeem-input',
 		data() {
 			return {
 				userInput: '',

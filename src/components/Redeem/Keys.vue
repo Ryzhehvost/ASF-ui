@@ -18,7 +18,7 @@
 <script>
 	export default {
 		props: { keys: Object },
-		name: 'bgr-keys',
+		name: 'redeem-keys',
 		computed: {
 			noKeys() {
 				return Object.keys(this.keys).length === 0;

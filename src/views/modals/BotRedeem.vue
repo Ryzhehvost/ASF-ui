@@ -1,8 +1,6 @@
 <template>
 	<main class="main-container main-container--modal">
-		<template v-if="!bot">
-			<h2 class="title" v-if="!bot">Not found!</h2>
-		</template>
+		<h2 class="title" v-if="!bot">Not found!</h2>
 
 		<template v-else>
 			<h2 class="title">{{ bot.name }}</h2>
@@ -11,9 +9,10 @@
 			<bgr-status v-if="!loading && state === 'input'" :used-keys="usedKeys" :unused-keys="unusedKeys" @reset="onReset" @show-unused="state = 'unusedKeys'" @show-used="state = 'usedKeys'"></bgr-status>
 
 			<keep-alive>
-				<bgr-input v-if="state === 'input'" @check="onCheck"></bgr-input>
-				<bgr-check v-if="state === 'check'" :keys="keys" :bot="bot" :confirming="confirming" @confirm="onConfirm" @cancel="onCancel"></bgr-check>
-				<bgr-summary v-if="state === 'summary'" :keys="summaryKeys" :title="$t('bgr-summary-success')" @back="$parent.close()"></bgr-summary>
+				<redeem-input v-if="state === 'input'" @check="onCheck"></redeem-input>
+				<redeem-check v-if="state === 'check'" :keys="keys" :bot="bot" :confirming-bgr="confirmingBgr" :confirming-redeem="confirmingRedeem" @bgr="onBGR" @redeem="onRedeem" @cancel="onCancel"></redeem-check>
+				<redeem-summary v-if="state === 'redeem-summary'" :keys="summaryKeys" :title="$t('redeem-summary')" @back="$parent.close()"></redeem-summary>
+				<bgr-summary v-if="state === 'bgr-summary'" :keys="summaryKeys" :title="$t('bgr-summary-success')" @back="$parent.close()"></bgr-summary>
 				<bgr-summary v-if="state === 'usedKeys'" :keys="usedKeys" :title="$t('bgr-used-keys')" @back="state = 'input'"></bgr-summary>
 				<bgr-summary v-if="state === 'unusedKeys'" :keys="unusedKeys" :title="$t('bgr-unused-keys')" @back="state = 'input'"></bgr-summary>
 			</keep-alive>
@@ -22,18 +21,20 @@
 </template>
 
 <script>
-	import BgrCheck from '../../components/BGR/Check.vue';
-	import BgrInput from '../../components/BGR/Input.vue';
-	import BgrStatus from '../../components/BGR/Status.vue';
-	import BgrSummary from '../../components/BGR/Summary.vue';
+	import RedeemCheck from '../../components/Redeem/Check.vue';
+	import RedeemInput from '../../components/Redeem/Input.vue';
+	import BgrStatus from '../../components/Redeem/BgrStatus.vue';
+	import BgrSummary from '../../components/Redeem/BgrSummary.vue';
+	import RedeemSummary from '../../components/Redeem/Summary.vue';
 
 	export default {
 		name: 'bot-redeem',
-		components: { BgrStatus, BgrInput, BgrCheck, BgrSummary },
+		components: { BgrStatus, RedeemInput, RedeemCheck, BgrSummary, RedeemSummary },
 		data() {
 			return {
 				loading: true,
-				confirming: false,
+				confirmingBgr: false,
+				confirmingRedeem: false,
 				state: 'input',
 				unusedKeys: {},
 				usedKeys: {},
@@ -67,15 +68,28 @@
 				this.keys = keys;
 				this.state = 'check';
 			},
-			async onConfirm() {
-				this.confirming = true;
+			async onRedeem() {
+				if (this.confirmingBgr || this.confirmingRedeem) return;
+				this.confirmingRedeem = true;
+
+				try {
+					const response = await this.$http.post(`bot/${this.bot.name}/redeem`, { KeysToRedeem: Object.keys(this.keys) });
+					this.state = 'redeem-summary';
+					this.summaryKeys = response[this.bot.name];
+				} finally {
+					this.confirmingRedeem = false;
+				}
+			},
+			async onBGR() {
+				if (this.confirmingBgr || this.confirmingRedeem) return;
+				this.confirmingBgr = true;
 
 				try {
 					const activatedKeys = await this.$http.post(`bot/${this.bot.name}/GamesToRedeemInBackground`, { GamesToRedeemInBackground: this.keys });
-					this.state = 'summary';
+					this.state = 'bgr-summary';
 					this.summaryKeys = activatedKeys[this.bot.name];
 				} finally {
-					this.confirming = false;
+					this.confirmingBgr = false;
 				}
 			},
 			onCancel() {

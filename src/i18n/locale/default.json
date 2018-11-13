@@ -23,6 +23,8 @@
 	"bgr-unused-keys": "Unused keys",
 	"bgr-used-keys-count": "{count} used",
 	"bgr-unused-keys-count": "{count} unused",
+	"redeem": "Redeem",
+	"redeem-with-bgr": "Add to BGR",
 	"reset": "Reset",
 	"check": "Check",
 	"bgr-keys-insert": "Insert your keys here",
